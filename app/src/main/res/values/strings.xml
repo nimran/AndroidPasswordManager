@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AndroidPasswordManager</string>
+    <string name="title_activity_splash">SplashActivity</string>
 </resources>
