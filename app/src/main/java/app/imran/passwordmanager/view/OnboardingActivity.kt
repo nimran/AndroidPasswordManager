@@ -66,7 +66,7 @@ class OnboardingActivity : ComponentActivity() {
         pagerState: PagerState,
         modifier: Modifier = Modifier
     ) {
-        Box(modifier = modifier) {
+        Box(modifier = modifier.background(color = Color.White.copy()).fillMaxHeight()) {
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HorizontalPager(count = item.size, state = pagerState) { page ->
