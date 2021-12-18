@@ -1,13 +1,17 @@
 package app.imran.passwordmanager.view
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -17,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -33,6 +38,8 @@ import com.google.accompanist.pager.rememberPagerState
 
 class OnboardingActivity : ComponentActivity() {
 
+    lateinit var items: ArrayList<OnboardingData> 
+
     @ExperimentalPagerApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +49,7 @@ class OnboardingActivity : ComponentActivity() {
             AndroidPasswordManagerTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    val items = getItems()
+                    items = getOnboardingItems()
 
                     OnBoardingPager(items, rememberPagerState(), modifier = Modifier.fillMaxWidth())
                 }
@@ -50,7 +57,7 @@ class OnboardingActivity : ComponentActivity() {
         }
     }
 
-    private fun getItems(): ArrayList<OnboardingData> {
+    private fun getOnboardingItems(): ArrayList<OnboardingData> {
         val items = ArrayList<OnboardingData>()
         items.add(OnboardingData(R.drawable.screen_neverforget, "Never forget any Password"))
         items.add(OnboardingData(R.drawable.screen_security, "All Data's are Encrypted"))
@@ -66,7 +73,21 @@ class OnboardingActivity : ComponentActivity() {
         pagerState: PagerState,
         modifier: Modifier = Modifier
     ) {
-        Box(modifier = modifier.background(color = Color.White.copy()).fillMaxHeight()) {
+        Box(
+            modifier = modifier
+                .background(color = Color.White.copy())
+                .fillMaxHeight()
+        ) {
+            Box(modifier = Modifier.align(Alignment.TopEnd).padding(20.dp)) {
+                Text(
+                    modifier = Modifier.clickable {
+                        Toast.makeText(this@OnboardingActivity, "Skip", Toast.LENGTH_LONG).show()
+                    },
+                    text = "Skip",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight(weight = 500)
+                )
+            }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 HorizontalPager(count = item.size, state = pagerState) { page ->
@@ -94,6 +115,9 @@ class OnboardingActivity : ComponentActivity() {
                     }
                 }
                 PagerIndicator(size = item.size, currentPage = pagerState.currentPage)
+            }
+            Box(modifier = Modifier.align(Alignment.BottomCenter).padding(20.dp)) {
+                SetButtons(pagerState)
             }
         }
     }
@@ -125,12 +149,28 @@ class OnboardingActivity : ComponentActivity() {
                 )
         )
     }
-//
-//    @Composable
-//    fun setButtons() {
-//        Row(modifier = Modifier.padding(top = 20.dp).fillMaxWidth()) {
-//
-//
-//        }
-//    }
+
+    @ExperimentalPagerApi
+    @Composable
+    fun SetButtons(pagerState: PagerState) {
+        Row(
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+
+            Button(
+                onClick = {
+                    Toast.makeText(this@OnboardingActivity, "Got it", Toast.LENGTH_LONG).show()
+                },
+                shape = RoundedCornerShape(50),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = pagerState.currentPage == items.size - 1,
+
+            ) {
+                Text(text = "Get Started")
+            }
+        }
+    }
 }
