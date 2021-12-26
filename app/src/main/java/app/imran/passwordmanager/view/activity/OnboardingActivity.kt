@@ -1,19 +1,16 @@
-package app.imran.passwordmanager.view
+package app.imran.passwordmanager.view.activity
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,6 +26,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import app.imran.passwordmanager.R
 import app.imran.passwordmanager.data.OnboardingData
 import app.imran.passwordmanager.ui.theme.AndroidPasswordManagerTheme
+import app.imran.passwordmanager.ui.theme.AppGreen
 import app.imran.passwordmanager.ui.theme.Typography
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -38,17 +35,17 @@ import com.google.accompanist.pager.rememberPagerState
 
 class OnboardingActivity : ComponentActivity() {
 
-    lateinit var items: ArrayList<OnboardingData> 
+    lateinit var items: ArrayList<OnboardingData>
 
     @ExperimentalPagerApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
+//        window.statusBarColor = ContextCompat.getColor(this, R.color.white)
         setContent {
             AndroidPasswordManagerTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
+                Surface() {
                     items = getOnboardingItems()
 
                     OnBoardingPager(items, rememberPagerState(), modifier = Modifier.fillMaxWidth())
@@ -66,6 +63,19 @@ class OnboardingActivity : ComponentActivity() {
         return items
     }
 
+    @Composable
+    fun SkipButton() {
+        TextButton(
+            onClick = {
+                startActivity(Intent(this@OnboardingActivity, AuthenticationActivity::class.java))
+                finish()
+            },
+            enabled = true
+        ) {
+            Text(color = Color.Red.copy(), text = "Skip")
+        }
+    }
+
     @ExperimentalPagerApi
     @Composable
     fun OnBoardingPager(
@@ -75,21 +85,11 @@ class OnboardingActivity : ComponentActivity() {
     ) {
         Box(
             modifier = modifier
-                .background(color = Color.White.copy())
                 .fillMaxHeight()
         ) {
-            Box(modifier = Modifier.align(Alignment.TopEnd).padding(20.dp)) {
-                Text(
-                    modifier = Modifier.clickable {
-                        Toast.makeText(this@OnboardingActivity, "Skip", Toast.LENGTH_LONG).show()
-                    },
-                    text = "Skip",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight(weight = 500)
-                )
-            }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
+//                SkipButton()
                 HorizontalPager(count = item.size, state = pagerState) { page ->
                     Column(
                         modifier = Modifier
@@ -107,8 +107,8 @@ class OnboardingActivity : ComponentActivity() {
                         Text(
                             text = item[page].desc,
                             modifier = Modifier.padding(top = 50.dp, start = 20.dp, end = 20.dp),
-                            color = Color.Black,
-                            style = Typography.caption,
+                            color = MaterialTheme.colors.primary,
+                            style = Typography.body2,
                             fontSize = 18.sp,
                             textAlign = TextAlign.Center
                         )
@@ -116,7 +116,11 @@ class OnboardingActivity : ComponentActivity() {
                 }
                 PagerIndicator(size = item.size, currentPage = pagerState.currentPage)
             }
-            Box(modifier = Modifier.align(Alignment.BottomCenter).padding(20.dp)) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(20.dp)
+            ) {
                 SetButtons(pagerState)
             }
         }
@@ -145,7 +149,7 @@ class OnboardingActivity : ComponentActivity() {
                 .width(width.value)
                 .clip(CircleShape)
                 .background(
-                    if (isSelected) Color.Red else Color.Gray.copy(alpha = 0.5f)
+                    if (isSelected) AppGreen else Color.Gray.copy(alpha = 0.5f)
                 )
         )
     }
@@ -162,14 +166,19 @@ class OnboardingActivity : ComponentActivity() {
 
             Button(
                 onClick = {
-                    Toast.makeText(this@OnboardingActivity, "Got it", Toast.LENGTH_LONG).show()
+                    startActivity(Intent(this@OnboardingActivity, AuthenticationActivity::class.java))
+                    finish()
                 },
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = AppGreen,
+                    disabledBackgroundColor = AppGreen
+                        .copy(alpha = 0.2f)
+                ),
                 shape = RoundedCornerShape(50),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = pagerState.currentPage == items.size - 1,
-
             ) {
-                Text(text = "Get Started")
+                Text(style = Typography.body2, text = "Get Started")
             }
         }
     }

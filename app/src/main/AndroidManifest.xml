@@ -7,15 +7,17 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        >
-
+        android:supportsRtl="true">
         <activity
-            android:theme="@style/Theme.App.Starting"
-            android:name=".view.OnboardingActivity"
+            android:name=".view.activity.AuthenticationActivity"
+            android:exported="false"
+            android:label="@string/title_activity_authentication"
+            android:theme="@style/Theme.AndroidPasswordManager.NoActionBar" />
+        <activity
+            android:name=".view.activity.OnboardingActivity"
             android:exported="true"
             android:label="@string/app_name"
-            >
+            android:theme="@style/Theme.App.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
