@@ -9,9 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,10 +19,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import app.imran.passwordmanager.R
 import app.imran.passwordmanager.data.OnboardingData
+import app.imran.passwordmanager.ui.components.AppButton
+import app.imran.passwordmanager.ui.components.AppButtonInterface
 import app.imran.passwordmanager.ui.theme.AndroidPasswordManagerTheme
 import app.imran.passwordmanager.ui.theme.AppGreen
 import app.imran.passwordmanager.ui.theme.Typography
@@ -33,7 +32,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 
-class OnboardingActivity : ComponentActivity() {
+class OnboardingActivity : ComponentActivity(),AppButtonInterface {
 
     lateinit var items: ArrayList<OnboardingData>
 
@@ -61,19 +60,6 @@ class OnboardingActivity : ComponentActivity() {
         items.add(OnboardingData(R.drawable.screen_saveall, "Bring all your passwords under one roof"))
 
         return items
-    }
-
-    @Composable
-    fun SkipButton() {
-        TextButton(
-            onClick = {
-                startActivity(Intent(this@OnboardingActivity, AuthenticationActivity::class.java))
-                finish()
-            },
-            enabled = true
-        ) {
-            Text(color = Color.Red.copy(), text = "Skip")
-        }
     }
 
     @ExperimentalPagerApi
@@ -154,32 +140,15 @@ class OnboardingActivity : ComponentActivity() {
         )
     }
 
+
     @ExperimentalPagerApi
     @Composable
     fun SetButtons(pagerState: PagerState) {
-        Row(
-            modifier = Modifier
-                .padding(top = 20.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
+        AppButton(text = "Get Started", listener = this@OnboardingActivity , enabled = pagerState.currentPage == items.size - 1)
+    }
 
-            Button(
-                onClick = {
-                    startActivity(Intent(this@OnboardingActivity, AuthenticationActivity::class.java))
-                    finish()
-                },
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = AppGreen,
-                    disabledBackgroundColor = AppGreen
-                        .copy(alpha = 0.2f)
-                ),
-                shape = RoundedCornerShape(50),
-                modifier = Modifier.fillMaxWidth(),
-                enabled = pagerState.currentPage == items.size - 1,
-            ) {
-                Text(style = Typography.body2, text = "Get Started")
-            }
-        }
+    override fun onButtonClicked() {
+        startActivity(Intent(this@OnboardingActivity, AuthenticationActivity::class.java))
+        finish()
     }
 }
